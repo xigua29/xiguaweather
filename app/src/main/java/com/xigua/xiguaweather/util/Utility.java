@@ -40,10 +40,11 @@ public class Utility {
                 JSONArray allCities = new JSONArray(response);
                 for (int i = 0; i < allCities.length(); i++) {
                     JSONObject cityObject = allCities.getJSONObject(i);
-                    City province = new City();
-                    province.setCityName(cityObject.getString("name"));
-                    province.setCityCode(cityObject.getInt("id"));
-                    province.save();
+                    City city = new City();
+                    city.setCityName(cityObject.getString("name"));
+                    city.setCityCode(cityObject.getInt("id"));
+                    city.setProvinceId(provinceId);
+                    city.save();
                 }
                 return true;
             } catch (JSONException e) {
@@ -58,10 +59,11 @@ public class Utility {
                 JSONArray allCounties = new JSONArray(response);
                 for (int i = 0; i < allCounties.length(); i++) {
                     JSONObject countryObject = allCounties.getJSONObject(i);
-                    County province = new County();
-                    province.setCountyName(countryObject.getString("name"));
-                    province.setCityId(countryObject.getInt("weather_id"));
-                    province.save();
+                    County county = new County();
+                    county.setCountyName(countryObject.getString("name"));
+                    county.setCityId(countryObject.getInt("weather_id"));
+                    county.setCityId(cityId);
+                    county.save();
                 }
                 return true;
             } catch (JSONException e) {

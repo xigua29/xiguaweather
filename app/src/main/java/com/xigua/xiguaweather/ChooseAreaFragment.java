@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.xigua.xiguaweather.db.City;
 import com.xigua.xiguaweather.db.County;
@@ -67,10 +68,13 @@ public class ChooseAreaFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> parent, View view, int i, long l) {
                 if (currentLevel == LEVEL_PROVINCE) {
                     selectedPrvince = provinceList.get(i);
-                    queryCounties();
+                    queryCities();
+                } else if (currentLevel == LEVEL_CITY) {
+                    selectedCity = cityList.get(i);
+                   queryCounties();
                 }
             }
         });
@@ -84,6 +88,7 @@ public class ChooseAreaFragment extends Fragment {
                 }
             }
         });
+        queryProvinces();
     }
 
     private void queryProvinces() {
@@ -145,23 +150,6 @@ public class ChooseAreaFragment extends Fragment {
     private void queryFromServer(String address, final String type) {
         showProgressDialog();
         HttpUtil.sendOkHttpRequest(address, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        closeProgressDialog();
-                    }
-                });
-            }
-
-            private void closeProgressDialog() {
-                if (progressDialog != null) {
-                    progressDialog.dismiss();
-                }
-            }
-
-            @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 boolean result = false;
@@ -188,8 +176,29 @@ public class ChooseAreaFragment extends Fragment {
                     });
                 }
             }
+
+            public void onFailure(Call call, IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        closeProgressDialog();
+                        Toast.makeText(getContext(), "加载失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         });
     }
+
+            private void closeProgressDialog() {
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                }
+            }
+
+
+
+
+
         private void showProgressDialog(){
             if (progressDialog == null) {
                 progressDialog = new ProgressDialog(getActivity());
